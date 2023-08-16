@@ -18,6 +18,7 @@ namespace MC_SVFleetControlExtended
             cloakWithPlayerStates = new Dictionary<int, bool>();
             escorts = new Dictionary<int, int>();
             desiredDistances = new Dictionary<int, int>();
+            dedicatedDefenderStates = new Dictionary<int, bool>();
         }
     }
 }

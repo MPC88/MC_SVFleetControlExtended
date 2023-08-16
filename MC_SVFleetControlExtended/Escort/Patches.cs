@@ -42,13 +42,48 @@ namespace MC_SVFleetControlExtended.Escort
 
         [HarmonyPatch(typeof(AIMercenary), "SearchForEnemies")]
         [HarmonyPostfix]
-        private static void AIMercSearchForEnemies_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, SpaceShip ___ss)
+        private static void AIMercSearchForEnemies_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, SpaceShip ___ss, bool ___hasTorpedo)
         {
             Transform escortee = GetEscorteeTransform(__instance);
             if (__instance.guardTarget == null || ___targetDocking != null || 
                 __instance.carrierDocking || __instance.returningToBoss ||
-                escortee == null)
+                !(__instance.Char is PlayerFleetMember))
                 return;
+
+            Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool isDD);
+
+            // Small objects for dedicated defenders
+            if(isDD)
+            {
+                List<ScanObject> objs = __instance.objectsScan.smallObjects;
+                int objectIndex = -1;
+                float distanceToCurObject = 1000f;
+                for (int i = 0; i < objs.Count; i++)
+                {
+                    if (objs[i] != null && objs[i].trans != null)
+                    {
+                        float distanceToNextObject = Vector3.Distance(___tf.position, objs[i].trans.position);
+                        float additionalDesiredDistance = objs[i].trans.localScale.x * 2f;
+                        if (___hasTorpedo)
+                            additionalDesiredDistance += 40f;
+                        if (distanceToNextObject > __instance.desiredDistance + additionalDesiredDistance && distanceToNextObject < distanceToCurObject)
+                        {
+                            objectIndex = i;
+                            distanceToCurObject = distanceToNextObject;
+                        }
+                    }
+                }
+                if (objectIndex > 0)
+                {
+                    __instance.target = objs[objectIndex].trans;
+                    __instance.targetEntity = objs[objectIndex].trans.GetComponent<Entity>();
+                    return;
+                }
+            }
+
+            // Either not dedicated defender or no small objects
+            if (escortee == null)
+                escortee = __instance.guardTarget;
 
             Transform curTarget = __instance.target;
             Transform curTargetTarget = null;
@@ -57,7 +92,7 @@ namespace MC_SVFleetControlExtended.Escort
 
             Transform newTarget = null;
 
-            if (curTarget == null || curTargetTarget == __instance.guardTarget)
+            if (curTarget == null || (curTargetTarget == __instance.guardTarget && escortee != __instance.guardTarget))
             {
                 Collider[] array = Physics.OverlapSphere(___tf.position, 250f, 8704);                
                 int i = 0;
@@ -93,8 +128,18 @@ namespace MC_SVFleetControlExtended.Escort
                     i++;
                 }
 
-                if(newTarget != null)
+                if (newTarget != null)
+                {
                     __instance.SetNewTarget(newTarget, true);
+                }
+                else if (isDD && 
+                    ((curTargetTarget != __instance.guardTarget && escortee == __instance.guardTarget) || 
+                    escortee != __instance.guardTarget))
+                {
+                    // No one attacking escortee and no small objects
+                    __instance.target = null;
+                    __instance.targetEntity = null;
+                }
             }
         }
 
@@ -213,11 +258,14 @@ namespace MC_SVFleetControlExtended.Escort
                 if (!gotValue)
                     curEscorteeID = Config.PLAYER_ESCORT_ID;
 
-                gotValue = Main.data.dedicatedDefenderStates.TryGetValue(crewID, out bool curDDStatus);
-                if(!gotValue)
-                    curDDStatus = Config.DEFAULT_DEDICATED_DEFENDER_STATE;
+                gotValue = Main.data.dedicatedDefenderStates.TryGetValue(crewID, out bool curDDState);
+                if (!gotValue)
+                {
+                    Main.data.dedicatedDefenderStates.Add(crewID, Config.DEFAULT_DEDICATED_DEFENDER_STATE);
+                    curDDState = Config.DEFAULT_DEDICATED_DEFENDER_STATE;
+                }
 
-                UI.EnableUIElements(true, ___aiMercChar, curEscorteeID, curDDStatus);
+                UI.EnableUIElements(true, ___aiMercChar, curEscorteeID, curDDState);
             }
             else
             {
