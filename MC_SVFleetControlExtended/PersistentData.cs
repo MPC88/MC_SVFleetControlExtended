@@ -10,6 +10,7 @@ namespace MC_SVFleetControlExtended
         internal Dictionary<int, bool> cloakWithPlayerStates;
         internal Dictionary<int, int> escorts;
         internal Dictionary<int, int> desiredDistances;
+        internal Dictionary<int, bool> dedicatedDefender;
 
         internal PersistentData()
         {

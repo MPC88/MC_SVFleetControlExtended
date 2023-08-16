@@ -18,7 +18,7 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
         [HarmonyPrefix]
         private static void FBCOpen_Pre(FleetBehaviorControl __instance, GameObject ___emergencyWarpGO)
         {
-            UI.ValidateEnergyBarrierGO(__instance, ___emergencyWarpGO);
+            UI.ValidateUIElements(__instance, ___emergencyWarpGO);
         }
 
         [HarmonyPatch(typeof(FleetBehaviorControl), nameof(FleetBehaviorControl.Open))]

@@ -10,13 +10,13 @@ namespace MC_SVFleetControlExtended.Cloak
         private static Toggle cloakToggle = null;
         private static Text cloakToggleText = null;
 
-        internal static void ValidateCloakToggle(FleetBehaviorControl fleetBehaviourControl, Toggle collectLootToggle, GameObject emergencyWarpGO)
+        internal static void ValidateUIElements(FleetBehaviorControl fleetBehaviourControl, Toggle collectLootToggle, GameObject emergencyWarpGO)
         {
             if (cloakToggleGO == null)
-                CreateCloakToggle(fleetBehaviourControl, collectLootToggle, emergencyWarpGO);
+                CreateUIElements(fleetBehaviourControl, collectLootToggle, emergencyWarpGO);
         }
 
-        internal static void CreateCloakToggle(FleetBehaviorControl fleetBehaviourControl, Toggle collectLootToggle, GameObject emergencyWarpGO)
+        internal static void CreateUIElements(FleetBehaviorControl fleetBehaviourControl, Toggle collectLootToggle, GameObject emergencyWarpGO)
         {
             cloakToggleGO = GameObject.Instantiate(collectLootToggle.gameObject);
             cloakToggleGO.SetActive(true);

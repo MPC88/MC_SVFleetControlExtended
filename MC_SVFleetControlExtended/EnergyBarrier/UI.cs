@@ -10,13 +10,13 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
         private static Text energyBarrierText = null;
         private static Dropdown energyBarrierDropdown = null;
 
-        internal static void ValidateEnergyBarrierGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void ValidateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
         {
             if (energyBarrierGO == null)
-                CreateEnergyBarrierGO(fleetBehaviourControl, emergencyWarpGO);
+                CreateUIElements(fleetBehaviourControl, emergencyWarpGO);
         }
 
-        internal static void CreateEnergyBarrierGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void CreateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
         {
             energyBarrierGO = GameObject.Instantiate(emergencyWarpGO);
             energyBarrierGO.SetActive(true);

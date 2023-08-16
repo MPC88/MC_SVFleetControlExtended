@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MC_SVFleetControlExtended.Escort
 {
@@ -112,6 +113,8 @@ namespace MC_SVFleetControlExtended.Escort
                 __instance.SetRepairTarget(escortee);
         }
 
+        [HarmonyPatch(typeof(AIMercenary), "SetActions")]
+        [HarmonyPostfix]
         private static void AIMercSetActions_Post(AIMercenary __instance, Transform ___tf)
         {
             Transform escortee = GetEscorteeTransform(__instance);
@@ -154,6 +157,19 @@ namespace MC_SVFleetControlExtended.Escort
             }
         }
 
+        [HarmonyPatch(typeof(AIMercenary), "SetNewDestination")]
+        [HarmonyPrefix]
+        private static bool AIMercSetNewDestination_Pre(AIMercenary __instance)
+        {
+            Transform escortee = GetEscorteeTransform(__instance);
+            if (escortee == null)
+                return false;
+            
+            return true;
+        }
+
+        [HarmonyPatch(typeof(AIMercenary), "SetNewDestination")]
+        [HarmonyPostfix]
         private static void AIMercSetNewDestination_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, GameObject ___followPosition)
         {
             Transform escortee = GetEscorteeTransform(__instance);
@@ -177,9 +193,9 @@ namespace MC_SVFleetControlExtended.Escort
 
         [HarmonyPatch(typeof(FleetBehaviorControl), nameof(FleetBehaviorControl.Open))]
         [HarmonyPrefix]
-        private static void FBCOpen_Pre(FleetBehaviorControl __instance, GameObject ___emergencyWarpGO)
+        private static void FBCOpen_Pre(FleetBehaviorControl __instance, GameObject ___emergencyWarpGO, Toggle ___collectLootToggle)
         {
-            UI.ValidateEscortGO(__instance, ___emergencyWarpGO);
+            UI.ValidateUIElements(__instance, ___emergencyWarpGO, ___collectLootToggle);
         }
 
         [HarmonyPatch(typeof(FleetBehaviorControl), nameof(FleetBehaviorControl.Open))]
@@ -309,10 +325,10 @@ namespace MC_SVFleetControlExtended.Escort
                 return;
 
             AICharacter aiChar = PChar.Char.mercenaries[___selectedItem];
-            if (aiChar is PlayerFleetMember &&
-                Main.data.escorts != null)
+            if (aiChar is PlayerFleetMember && Main.data.escorts != null)
             {
                 int id = (aiChar as PlayerFleetMember).crewMemberID;
+
                 if (Main.data.escorts.ContainsKey(id))
                 {
                     Main.data.escorts.Remove(id);

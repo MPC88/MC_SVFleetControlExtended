@@ -11,13 +11,13 @@ namespace MC_SVFleetControlExtended.DesiredDistance
         private static Text desiredDistanceText = null;
         private static Dropdown desiredDistanceDropdown = null;
 
-        internal static void ValidateDesiredDistanceGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void ValidateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
         {
             if (desiredDistanceGO == null)
-                CreateDesiredDistanceGO(fleetBehaviourControl, emergencyWarpGO);
+                CreateUIElements(fleetBehaviourControl, emergencyWarpGO);
         }
 
-        internal static void CreateDesiredDistanceGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void CreateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
         {
             desiredDistanceGO = GameObject.Instantiate(emergencyWarpGO);
             desiredDistanceGO.SetActive(true);

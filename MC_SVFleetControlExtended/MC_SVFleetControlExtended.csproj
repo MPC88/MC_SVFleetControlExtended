@@ -101,8 +101,6 @@
     <Compile Include="EnergyBarrier\UI.cs" />
     <Compile Include="Escort\Patches.cs" />
     <Compile Include="Escort\UI.cs" />
-    <Compile Include="HoldPosition\Patches.cs" />
-    <Compile Include="HoldPosition\UI.cs" />
     <Compile Include="KeyCodeSubset.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="PersistentData.cs" />

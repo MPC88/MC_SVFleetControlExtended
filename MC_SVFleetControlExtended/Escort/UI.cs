@@ -7,19 +7,21 @@ namespace MC_SVFleetControlExtended.Escort
 {
     internal class UI
     {
+        internal static AICharacter menuOpenForChar = null;
+
         private static GameObject escortGO = null;
         private static Text escortText = null;
         private static Dropdown escortDropdown = null;
         private static Dictionary<int, int> escortDropdownValueCrewID = new Dictionary<int, int>();
         private static PlayerControl pc = null;
 
-        internal static void ValidateEscortGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void ValidateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO, Toggle collectLootToggle)
         {
             if (escortGO == null)
-                CreateEscortGO(fleetBehaviourControl, emergencyWarpGO);
+                CreateUIElements(fleetBehaviourControl, emergencyWarpGO, collectLootToggle);
         }
 
-        internal static void CreateEscortGO(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO)
+        internal static void CreateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO, Toggle collectLootToggle)
         {
             escortGO = GameObject.Instantiate(emergencyWarpGO);
             escortGO.SetActive(true);
@@ -52,26 +54,9 @@ namespace MC_SVFleetControlExtended.Escort
                 // Set available options
                 escortDropdown.ClearOptions();
                 escortDropdownValueCrewID.Clear();
-                int val = 1;
-                int escorteeIDListEntry = 0;
-                List<string> optionDataList = new List<string>();
-                optionDataList.Add("Player");
-                foreach (AIMercenaryCharacter aimc in PChar.Char.mercenaries)
-                {
-                    if (aimc is PlayerFleetMember && 
-                        (!(aiChar is PlayerFleetMember) || 
-                        (aimc as PlayerFleetMember).crewMemberID != (aiChar as PlayerFleetMember).crewMemberID))
-                    {
-                        optionDataList.Add(aimc.Name());
-                        int crewID = (aimc as PlayerFleetMember).crewMemberID;
-                        escortDropdownValueCrewID.Add(val, crewID);
-                        if (escorteeIDListEntry == 0 && crewID == escorteeID)
-                            escorteeIDListEntry = val;
-                        val++;
-                    }
-                }
-                escortDropdown.AddOptions(optionDataList);
-
+                menuOpenForChar = aiChar;
+                int selectedValue = RefreshEscortOptions(escorteeID);
+                
                 // Enable
                 Dropdown.DropdownEvent dde = new Dropdown.DropdownEvent();
                 UnityAction<int> ua = null;
@@ -79,13 +64,38 @@ namespace MC_SVFleetControlExtended.Escort
                 dde.AddListener(ua);
                 escortDropdown.onValueChanged = dde;
                 escortGO.SetActive(true);
-                escortDropdown.value = escorteeIDListEntry;
+                escortDropdown.value = selectedValue;
             }
             else
             {
+                menuOpenForChar = null;
                 escortDropdown.onValueChanged = null;
                 escortGO.SetActive(false);
             }
+        }
+
+        internal static int RefreshEscortOptions(int escorteeID)
+        {
+            int val = 1;
+            int escorteeIDListEntry = 0;
+            List<string> optionDataList = new List<string>();
+            optionDataList.Add("Player");
+            foreach (AIMercenaryCharacter aimc in PChar.Char.mercenaries)
+            {
+                if (aimc is PlayerFleetMember &&
+                    (!(menuOpenForChar is PlayerFleetMember) ||
+                    (aimc as PlayerFleetMember).crewMemberID != (menuOpenForChar as PlayerFleetMember).crewMemberID))
+                {
+                    optionDataList.Add(aimc.Name());
+                    int crewID = (aimc as PlayerFleetMember).crewMemberID;
+                    escortDropdownValueCrewID.Add(val, crewID);
+                    if (escorteeIDListEntry == 0 && crewID == escorteeID)
+                        escorteeIDListEntry = val;
+                    val++;
+                }
+            }
+            escortDropdown.AddOptions(optionDataList);
+            return escorteeIDListEntry;
         }
 
         private static void EscortChanged(PlayerFleetMember aiChar)

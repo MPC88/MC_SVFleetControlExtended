@@ -20,7 +20,7 @@ namespace MC_SVFleetControlExtended.Cloak
         [HarmonyPrefix]
         private static void FBCOpen_Pre(FleetBehaviorControl __instance, Toggle ___collectLootToggle, GameObject ___emergencyWarpGO)
         {
-            UI.ValidateCloakToggle(__instance, ___collectLootToggle, ___emergencyWarpGO);
+            UI.ValidateUIElements(__instance, ___collectLootToggle, ___emergencyWarpGO);
         }
 
         [HarmonyPatch(typeof(FleetBehaviorControl), nameof(FleetBehaviorControl.Open))]
