@@ -49,7 +49,7 @@ namespace MC_SVFleetControlExtended.DesiredDistance
                 fleetBehaviourControl);
         }
 
-        internal static void EnableDesiredDistanceDropdown(bool state, AIMercenaryCharacter aiChar, int value)
+        internal static void EnableUIElements(bool state, AIMercenaryCharacter aiChar, int value)
         {
             if (desiredDistanceGO == null)
                 return;

@@ -7,17 +7,17 @@ namespace MC_SVFleetControlExtended.Escort
 {
     internal class UI
     {
-        internal static AICharacter menuOpenForChar = null;
-
         private static GameObject escortGO = null;
         private static Text escortText = null;
         private static Dropdown escortDropdown = null;
         private static Dictionary<int, int> escortDropdownValueCrewID = new Dictionary<int, int>();
+        private static GameObject dedicatedDefenderToggleGO = null;
+        private static Toggle dedicatedDefenderToggle = null;
         private static PlayerControl pc = null;
 
         internal static void ValidateUIElements(FleetBehaviorControl fleetBehaviourControl, GameObject emergencyWarpGO, Toggle collectLootToggle)
         {
-            if (escortGO == null)
+            if (escortGO == null || dedicatedDefenderToggle == null)
                 CreateUIElements(fleetBehaviourControl, emergencyWarpGO, collectLootToggle);
         }
 
@@ -42,22 +42,33 @@ namespace MC_SVFleetControlExtended.Escort
                 goRect.rect.height,
                 0,
                 fleetBehaviourControl);
+
+            dedicatedDefenderToggleGO = GameObject.Instantiate(collectLootToggle.gameObject);
+            dedicatedDefenderToggleGO.SetActive(true);
+            dedicatedDefenderToggleGO.transform.Find("Label").gameObject.GetComponentInChildren<Text>().text = "Dedicated defender";
+            dedicatedDefenderToggle = dedicatedDefenderToggleGO.GetComponent<Toggle>();
+            dedicatedDefenderToggleGO.SetActive(false);
+
+            goRect = dedicatedDefenderToggleGO.GetComponent<RectTransform>();
+            goRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, goRect.rect.height);
+
+            Util.AddFleetBehaviourControlUIElement(
+                dedicatedDefenderToggleGO,
+                collectLootToggle.gameObject.transform.localPosition.x,
+                goRect.rect.height,
+                goRect.rect.height,
+                fleetBehaviourControl);
         }
 
-        internal static void EnableEscortDropDown(bool state, AIMercenaryCharacter aiChar, int escorteeID)
+        internal static void EnableUIElements(bool state, AIMercenaryCharacter aiChar, int escorteeID, bool dedicatedDefender)
         {
             if (escortGO == null)
                 return;
 
             if (state && aiChar != null)
             {
-                // Set available options
-                escortDropdown.ClearOptions();
-                escortDropdownValueCrewID.Clear();
-                menuOpenForChar = aiChar;
-                int selectedValue = RefreshEscortOptions(escorteeID);
-                
-                // Enable
+                // Enable dropdown
+                int selectedValue = RefreshEscortOptions(escorteeID, aiChar);
                 Dropdown.DropdownEvent dde = new Dropdown.DropdownEvent();
                 UnityAction<int> ua = null;
                 ua += (int index) => EscortChanged(aiChar as PlayerFleetMember);
@@ -65,17 +76,27 @@ namespace MC_SVFleetControlExtended.Escort
                 escortDropdown.onValueChanged = dde;
                 escortGO.SetActive(true);
                 escortDropdown.value = selectedValue;
+
+                // Enable dedicated defender toggle
+                Toggle.ToggleEvent te = new Toggle.ToggleEvent();
+                UnityAction<bool> ua2 = null;
+                ua2 += (bool val) => DedicatedDefenderValueChanged((aiChar as PlayerFleetMember).crewMemberID);
+                te.AddListener(ua2);
+                dedicatedDefenderToggle.onValueChanged = te;
+                dedicatedDefenderToggleGO.SetActive(true);
+                dedicatedDefenderToggle.SetIsOnWithoutNotify(dedicatedDefender);
             }
             else
             {
-                menuOpenForChar = null;
                 escortDropdown.onValueChanged = null;
                 escortGO.SetActive(false);
             }
         }
 
-        internal static int RefreshEscortOptions(int escorteeID)
+        internal static int RefreshEscortOptions(int escorteeID, AICharacter aiChar)
         {
+            escortDropdown.ClearOptions();
+            escortDropdownValueCrewID.Clear();
             int val = 1;
             int escorteeIDListEntry = 0;
             List<string> optionDataList = new List<string>();
@@ -83,8 +104,8 @@ namespace MC_SVFleetControlExtended.Escort
             foreach (AIMercenaryCharacter aimc in PChar.Char.mercenaries)
             {
                 if (aimc is PlayerFleetMember &&
-                    (!(menuOpenForChar is PlayerFleetMember) ||
-                    (aimc as PlayerFleetMember).crewMemberID != (menuOpenForChar as PlayerFleetMember).crewMemberID))
+                    (!(aiChar is PlayerFleetMember) ||
+                    (aimc as PlayerFleetMember).crewMemberID != (aiChar as PlayerFleetMember).crewMemberID))
                 {
                     optionDataList.Add(aimc.Name());
                     int crewID = (aimc as PlayerFleetMember).crewMemberID;
@@ -128,6 +149,13 @@ namespace MC_SVFleetControlExtended.Escort
                     break;
                 }
             }
+        }
+
+        private static void DedicatedDefenderValueChanged(int crewID)
+        {
+            if (Main.data.dedicatedDefenderStates != null &&
+                Main.data.dedicatedDefenderStates.ContainsKey(crewID))
+                Main.data.dedicatedDefenderStates[crewID] = dedicatedDefenderToggle.isOn;
         }
     }
 }

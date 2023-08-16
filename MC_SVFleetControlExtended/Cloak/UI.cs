@@ -36,7 +36,7 @@ namespace MC_SVFleetControlExtended.Cloak
                 fleetBehaviourControl);
         }
 
-        internal static void EnableCloakWithPlayerToggle(bool state, AIMercenaryCharacter aiChar, bool value)
+        internal static void EnableUIElements(bool state, AIMercenaryCharacter aiChar, bool value)
         {
             if (cloakToggle == null)
                 return;
@@ -45,7 +45,7 @@ namespace MC_SVFleetControlExtended.Cloak
             {
                 Toggle.ToggleEvent te = new Toggle.ToggleEvent();
                 UnityAction<bool> ua = null;
-                ua += (bool val) => CloakValueChanged(aiChar as PlayerFleetMember);
+                ua += (bool val) => CloakValueChanged((aiChar as PlayerFleetMember).crewMemberID);
                 te.AddListener(ua);
                 cloakToggle.onValueChanged = te;
                 cloakToggleGO.SetActive(true);
@@ -59,11 +59,11 @@ namespace MC_SVFleetControlExtended.Cloak
             }
         }
 
-        private static void CloakValueChanged(PlayerFleetMember aiChar)
+        private static void CloakValueChanged(int crewID)
         {
             if (Main.data.cloakWithPlayerStates != null &&
-                Main.data.cloakWithPlayerStates.ContainsKey(aiChar.crewMemberID))
-                Main.data.cloakWithPlayerStates[aiChar.crewMemberID] = cloakToggle.isOn;
+                Main.data.cloakWithPlayerStates.ContainsKey(crewID))
+                Main.data.cloakWithPlayerStates[crewID] = cloakToggle.isOn;
         }
     }
 }

@@ -49,11 +49,11 @@ namespace MC_SVFleetControlExtended.Cloak
                     curState = Config.DEFAULT_CLOAK_WITH_PLAYER_STATE;
                 }
 
-                UI.EnableCloakWithPlayerToggle(true, ___aiMercChar, curState);
+                UI.EnableUIElements(true, ___aiMercChar, curState);
             }
             else
             {
-                UI.EnableCloakWithPlayerToggle(false, null, false);
+                UI.EnableUIElements(false, null, false);
             }
         }
 
@@ -61,7 +61,7 @@ namespace MC_SVFleetControlExtended.Cloak
         [HarmonyPostfix]
         private static void FBCClose_Post()
         {
-            UI.EnableCloakWithPlayerToggle(false, null, false);
+            UI.EnableUIElements(false, null, false);
         }
 
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]

@@ -48,11 +48,11 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
                 }
                                 
 
-                UI.EnableEnergyBarrierDropDown(true, ___aiMercChar, curThreshold);
+                UI.EnableUIElements(true, ___aiMercChar, curThreshold);
             }
             else
             {
-                UI.EnableEnergyBarrierDropDown(false, null, -1);
+                UI.EnableUIElements(false, null, -1);
             }
         }
 
@@ -60,7 +60,7 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
         [HarmonyPostfix]
         private static void FBCClose_Post()
         {
-            UI.EnableEnergyBarrierDropDown(false, null, -1);
+            UI.EnableUIElements(false, null, -1);
         }
 
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]

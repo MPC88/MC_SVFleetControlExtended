@@ -208,16 +208,20 @@ namespace MC_SVFleetControlExtended.Escort
             if (___aiMercChar != null && ___aiMercChar is PlayerFleetMember)
             {
                 int crewID = (___aiMercChar as PlayerFleetMember).crewMemberID;
-                bool gotValue = Main.data.escorts.TryGetValue(crewID, out int curEscorteeID);
 
+                bool gotValue = Main.data.escorts.TryGetValue(crewID, out int curEscorteeID);
                 if (!gotValue)
                     curEscorteeID = Config.PLAYER_ESCORT_ID;
 
-                UI.EnableEscortDropDown(true, ___aiMercChar, curEscorteeID);
+                gotValue = Main.data.dedicatedDefenderStates.TryGetValue(crewID, out bool curDDStatus);
+                if(!gotValue)
+                    curDDStatus = Config.DEFAULT_DEDICATED_DEFENDER_STATE;
+
+                UI.EnableUIElements(true, ___aiMercChar, curEscorteeID, curDDStatus);
             }
             else
             {
-                UI.EnableEscortDropDown(false, null, -1);
+                UI.EnableUIElements(false, null, -1, false);
             }
         }
 
@@ -225,7 +229,7 @@ namespace MC_SVFleetControlExtended.Escort
         [HarmonyPostfix]
         private static void FBCClose_Post()
         {
-            UI.EnableEscortDropDown(false, null, -1);
+            UI.EnableUIElements(false, null, -1, false);
         }
 
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]

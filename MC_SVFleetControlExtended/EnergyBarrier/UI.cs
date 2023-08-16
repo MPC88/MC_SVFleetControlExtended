@@ -38,7 +38,7 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
                 fleetBehaviourControl);
         }
 
-        internal static void EnableEnergyBarrierDropDown(bool state, AIMercenaryCharacter aiChar, int value)
+        internal static void EnableUIElements(bool state, AIMercenaryCharacter aiChar, int value)
         {
             if (energyBarrierGO == null)
                 return;

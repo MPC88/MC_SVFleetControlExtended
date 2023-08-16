@@ -12,6 +12,7 @@ namespace MC_SVFleetControlExtended
 
         // Escort
         internal const int PLAYER_ESCORT_ID = -1;
+        internal const bool DEFAULT_DEDICATED_DEFENDER_STATE = false;
 
         //Desired distance
         internal const int DEFAULT_DESIRED_DISTANCE_OPT = 0;

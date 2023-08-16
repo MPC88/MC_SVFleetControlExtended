@@ -77,11 +77,11 @@ namespace MC_SVFleetControlExtended.DesiredDistance
                 }
 
 
-                UI.EnableDesiredDistanceDropdown(true, ___aiMercChar, curDistanceOptIndex);
+                UI.EnableUIElements(true, ___aiMercChar, curDistanceOptIndex);
             }
             else
             {
-                UI.EnableDesiredDistanceDropdown(false, null, -1);
+                UI.EnableUIElements(false, null, -1);
             }
         }
 
@@ -89,7 +89,7 @@ namespace MC_SVFleetControlExtended.DesiredDistance
         [HarmonyPostfix]
         private static void FBCClose_Post()
         {
-            UI.EnableDesiredDistanceDropdown(false, null, -1);
+            UI.EnableUIElements(false, null, -1);
         }
 
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]
