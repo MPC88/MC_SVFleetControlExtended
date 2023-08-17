@@ -42,7 +42,7 @@ namespace MC_SVFleetControlExtended.Escort
 
         [HarmonyPatch(typeof(AIMercenary), "SearchForEnemies")]
         [HarmonyPostfix]
-        private static void AIMercSearchForEnemies_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, SpaceShip ___ss, bool ___hasTorpedo)
+        private static void AIMercSearchForEnemies_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, SpaceShip ___ss)
         {
             Transform escortee = GetEscorteeTransform(__instance);
             if (__instance.guardTarget == null || ___targetDocking != null || 
@@ -64,8 +64,6 @@ namespace MC_SVFleetControlExtended.Escort
                     {
                         float distanceToNextObject = Vector3.Distance(___tf.position, objs[i].trans.position);
                         float additionalDesiredDistance = objs[i].trans.localScale.x * 2f;
-                        if (___hasTorpedo)
-                            additionalDesiredDistance += 40f;
                         if (distanceToNextObject > __instance.desiredDistance + additionalDesiredDistance && distanceToNextObject < distanceToCurObject)
                         {
                             objectIndex = i;
@@ -207,7 +205,9 @@ namespace MC_SVFleetControlExtended.Escort
         private static bool AIMercSetNewDestination_Pre(AIMercenary __instance)
         {
             Transform escortee = GetEscorteeTransform(__instance);
-            if (escortee == null)
+            if (__instance.Char != null && (__instance.Char is PlayerFleetMember) &&
+                Main.data.escorts.ContainsKey((__instance.Char as PlayerFleetMember).crewMemberID) &&
+                escortee == null)
                 return false;
             
             return true;
