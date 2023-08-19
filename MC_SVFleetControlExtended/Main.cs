@@ -28,6 +28,9 @@ namespace MC_SVFleetControlExtended
             Harmony.CreateAndPatchAll(typeof(Cloak.Patches));
             Harmony.CreateAndPatchAll(typeof(Escort.Patches));
             Harmony.CreateAndPatchAll(typeof(DesiredDistance.Patches));
+            Harmony.CreateAndPatchAll(typeof(DockUndockUnload.Patches));
+
+            DockUndockUnload.Patches.Config(this);
         }
 
         [HarmonyPatch(typeof(GameData), nameof(GameData.SaveGame))]
@@ -39,26 +42,7 @@ namespace MC_SVFleetControlExtended
 
         private void Update()
         {
-            int option = -1;
-            if (Input.GetKeyDown(KeyCode.F2))
-                option = 1; //0
-
-            if (Input.GetKeyDown(KeyCode.F3))
-                option = 5; //200
-
-            if (Input.GetKeyDown(KeyCode.F4))
-                option = 9; //400
-            
-            if(option > 0)
-            {
-                int[] keys = new int[Main.data.desiredDistances.Count];
-                Main.data.desiredDistances.Keys.CopyTo(keys, 0);
-
-                for (int i = 0; i < Main.data.desiredDistances.Count; i++)
-                {
-                    Main.data.desiredDistances[keys[i]] = option;
-                }                
-            }
+            DockUndockUnload.Patches.Update();
         }
 
         private static void SaveGame()

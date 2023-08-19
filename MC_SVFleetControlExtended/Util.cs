@@ -6,6 +6,8 @@ namespace MC_SVFleetControlExtended
 {
     internal class Util
     {
+        internal enum AIBehaviourRole { dps, healer, miner }
+
         private static GameObject emergencyWarpGO;
         private static GameObject lastAddedFleetBehaviourUI = null;
 
