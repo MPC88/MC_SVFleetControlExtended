@@ -53,9 +53,12 @@ namespace MC_SVFleetControlExtended.Escort
             Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool isDD);
 
             // Small objects for dedicated defenders
-            if(isDD)
-            {
-                List<ScanObject> objs = __instance.objectsScan.smallObjects;
+            if (pc == null)
+                pc = GameManager.instance.Player.GetComponent<PlayerControl>();
+
+            if (isDD && pc != null)
+            {       
+                List<ScanObject> objs = pc.objectsScan.smallObjects;
                 int objectIndex = -1;
                 float distanceToCurObject = 1000f;
                 for (int i = 0; i < objs.Count; i++)
@@ -160,6 +163,13 @@ namespace MC_SVFleetControlExtended.Escort
         [HarmonyPostfix]
         private static void AIMercSetActions_Post(AIMercenary __instance, Transform ___tf)
         {
+            // Set actions is a 3 second update method.  Use that to ensure dedicated defenders are prioritising
+            // missiles and drones by invoking search for enemies if their current target is a space ship.
+            if ((__instance.Char is PlayerFleetMember) &&
+                Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool dedicatedDefender) &&
+                dedicatedDefender && __instance.target != null && __instance.target.GetComponent<SpaceShip>() != null)
+                typeof(AIMercenary).GetMethod("SearchForEnemies").Invoke(__instance, null);
+
             Transform escortee = GetEscorteeTransform(__instance);
             if (escortee == null || __instance.guardTarget == null)
                 return;
