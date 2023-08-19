@@ -29,8 +29,16 @@ namespace MC_SVFleetControlExtended
             Harmony.CreateAndPatchAll(typeof(Escort.Patches));
             Harmony.CreateAndPatchAll(typeof(DesiredDistance.Patches));
             Harmony.CreateAndPatchAll(typeof(DockUndockUnload.Patches));
+            Harmony.CreateAndPatchAll(typeof(HoldPosition.Patches));
 
             DockUndockUnload.Patches.Config(this);
+            HoldPosition.Patches.Config(this);
+        }
+
+        private void Update()
+        {
+            DockUndockUnload.Patches.Update();
+            HoldPosition.Patches.Update();
         }
 
         [HarmonyPatch(typeof(GameData), nameof(GameData.SaveGame))]
@@ -38,11 +46,6 @@ namespace MC_SVFleetControlExtended
         private static void GameDataSaveGame_Pre()
         {
             SaveGame();
-        }
-
-        private void Update()
-        {
-            DockUndockUnload.Patches.Update();
         }
 
         private static void SaveGame()

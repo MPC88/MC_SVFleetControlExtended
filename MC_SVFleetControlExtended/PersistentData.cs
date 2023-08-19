@@ -11,6 +11,7 @@ namespace MC_SVFleetControlExtended
         internal Dictionary<int, int> escorts;
         internal Dictionary<int, int> desiredDistances;
         internal Dictionary<int, bool> dedicatedDefenderStates;
+        internal bool holdPosition;
 
         internal PersistentData()
         {
@@ -19,6 +20,7 @@ namespace MC_SVFleetControlExtended
             escorts = new Dictionary<int, int>();
             desiredDistances = new Dictionary<int, int>();
             dedicatedDefenderStates = new Dictionary<int, bool>();
+            holdPosition = false;
         }
     }
 }
