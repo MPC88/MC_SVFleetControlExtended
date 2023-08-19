@@ -45,7 +45,7 @@ namespace MC_SVFleetControlExtended.DesiredDistance
                 desiredDistanceGO,
                 emergencyWarpGO.transform.localPosition.x,
                 goRect.rect.height,
-                10,
+                0,
                 fleetBehaviourControl);
         }
 

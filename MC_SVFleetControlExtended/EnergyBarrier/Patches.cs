@@ -36,7 +36,7 @@ namespace MC_SVFleetControlExtended.EnergyBarrier
                         Main.data.energyBarrierThresholds.Add((PChar.Char.mercenaries[i] as PlayerFleetMember).crewMemberID, Config.DEFAULT_ENERGY_BARRIER_THRESHOLD);
             }
 
-            if (___aiMercChar != null && ___aiMercChar is PlayerFleetMember && Util.HasActiveEquipment(___aiMercChar, typeof(AE_EnergyBarrier)))
+            if (___aiMercChar != null && ___aiMercChar is PlayerFleetMember && Util.HasActiveEquipment(___aiMercChar, Util.ActiveEquipmentType.energybarrier))
             {
                 int crewID = (___aiMercChar as PlayerFleetMember).crewMemberID;
                 bool gotValue = Main.data.energyBarrierThresholds.TryGetValue(crewID, out int curThreshold);

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MC_SVFleetControlExtended
@@ -7,6 +8,12 @@ namespace MC_SVFleetControlExtended
     internal class Util
     {
         internal enum AIBehaviourRole { dps, healer, miner }
+        internal enum ActiveEquipmentType { energybarrier, cloak }
+        private static Dictionary<ActiveEquipmentType, int> effectID = new Dictionary<ActiveEquipmentType, int>()
+        {
+            {ActiveEquipmentType.energybarrier, 54}, // Barrier duration
+            {ActiveEquipmentType.cloak, 30} // Cloak cooldown
+        };
 
         private static GameObject emergencyWarpGO;
         private static GameObject lastAddedFleetBehaviourUI = null;
@@ -75,33 +82,34 @@ namespace MC_SVFleetControlExtended
             lastAddedFleetBehaviourUI = newUIElement;
         }
 
-        internal static bool HasActiveEquipment(AIMercenaryCharacter aiMechChar, Type activeEquipmentType)
+        internal static bool HasActiveEquipment(AIMercenaryCharacter aiMechChar, ActiveEquipmentType activeEquipmentType)
         {
-            return true;
-            PlayerControl pc = GameManager.instance.Player.GetComponent<PlayerControl>();
-            if (pc == null || pc.mercenaries.Count == 0)
-                return false;
-
-            foreach(Transform mercTrans in pc.mercenaries)
+            if (aiMechChar == null)
             {
-                AICharacter aic = mercTrans.GetComponent<AICharacter>();
-                if (aic == null || !(aic is AIMercenaryCharacter))
-                    return false;
+                Main.log.LogInfo("AIMC null");
+                return false;
+            }
 
-                AIMercenaryCharacter aimc = aic as AIMercenaryCharacter;
-                if(aimc == aiMechChar)
-                {
-                    SpaceShip ss = mercTrans.GetComponent<SpaceShip>();
-                    if (ss == null)
-                        return false;
+            if (aiMechChar.shipData == null)
+            {
+                Main.log.LogInfo("AIMC.shipData null");
+                return false;
+            }
 
-                    if (ss.activeEquips.Count == 0)
-                        return false;
+            foreach (InstalledEquipment installEquip in aiMechChar.shipData.equipments)
+            {
+                Equipment equipment = EquipmentDB.GetEquipment(installEquip.equipmentID);
+                for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
+                    if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
+                        return true;
+            }
 
-                    foreach(ActiveEquipment activeEquipment in ss.activeEquips)
-                        if (activeEquipment.GetType() == activeEquipmentType)
-                            return true;
-                }
+            foreach (BuiltInEquipmentData builtInEquip in aiMechChar.shipData.builtInData)
+            {
+                Equipment equipment = EquipmentDB.GetEquipment(builtInEquip.equipmentID);
+                for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
+                    if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
+                        return true;
             }
 
             return false;

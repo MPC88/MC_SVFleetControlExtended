@@ -24,12 +24,16 @@ namespace MC_SVFleetControlExtended
         public void Awake()
         {
             Harmony.CreateAndPatchAll(typeof(Main));
-            Harmony.CreateAndPatchAll(typeof(EnergyBarrier.Patches));
-            Harmony.CreateAndPatchAll(typeof(Cloak.Patches));
+
+            // Constant or no new UI elements
             Harmony.CreateAndPatchAll(typeof(Escort.Patches));
             Harmony.CreateAndPatchAll(typeof(DesiredDistance.Patches));
             Harmony.CreateAndPatchAll(typeof(DockUndockUnload.Patches));
             Harmony.CreateAndPatchAll(typeof(HoldPosition.Patches));
+
+            // Conditional new UI elements
+            Harmony.CreateAndPatchAll(typeof(EnergyBarrier.Patches));
+            Harmony.CreateAndPatchAll(typeof(Cloak.Patches));
 
             DockUndockUnload.Patches.Config(this);
             HoldPosition.Patches.Config(this);

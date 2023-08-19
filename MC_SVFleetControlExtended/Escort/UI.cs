@@ -40,7 +40,7 @@ namespace MC_SVFleetControlExtended.Escort
                 escortGO,
                 emergencyWarpGO.transform.localPosition.x,
                 goRect.rect.height,
-                0,
+                10,
                 fleetBehaviourControl);
 
             dedicatedDefenderToggleGO = GameObject.Instantiate(collectLootToggle.gameObject);

@@ -38,7 +38,7 @@ namespace MC_SVFleetControlExtended.Cloak
                         Main.data.cloakWithPlayerStates.Add((PChar.Char.mercenaries[i] as PlayerFleetMember).crewMemberID, Config.DEFAULT_CLOAK_WITH_PLAYER_STATE);
             }
 
-            if (___aiMercChar != null && ___aiMercChar is PlayerFleetMember && Util.HasActiveEquipment(___aiMercChar, typeof(AE_CloakingDevice)))
+            if (___aiMercChar != null && ___aiMercChar is PlayerFleetMember && Util.HasActiveEquipment(___aiMercChar, Util.ActiveEquipmentType.cloak))
             {
                 int crewID = (___aiMercChar as PlayerFleetMember).crewMemberID;
                 bool gotValue = Main.data.cloakWithPlayerStates.TryGetValue(crewID, out bool curState);
