@@ -168,7 +168,7 @@ namespace MC_SVFleetControlExtended.Escort
             if ((__instance.Char is PlayerFleetMember) &&
                 Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool dedicatedDefender) &&
                 dedicatedDefender && __instance.target != null && __instance.target.GetComponent<SpaceShip>() != null)
-                typeof(AIMercenary).GetMethod("SearchForEnemies").Invoke(__instance, null);
+                typeof(AIMercenary).GetMethod("SearchForEnemies", AccessTools.all).Invoke(__instance, null);
 
             Transform escortee = GetEscorteeTransform(__instance);
             if (escortee == null || __instance.guardTarget == null)
