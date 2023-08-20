@@ -15,7 +15,7 @@ Note: This mod includes functionality provided by the following, which should be
 - MC_SVDockUndockAllHotkeys  
 - MC_SVFleetEnergyBarrierControl  
 - MC_SVFleetRoleHotkeys  
-- MC_SVFleetStationCargoDrop
+- MC_SVFleetStationCargoDrop  
 All configured settings will be lost (keybinds, energy barrier thresholds).  
 
 Function  
