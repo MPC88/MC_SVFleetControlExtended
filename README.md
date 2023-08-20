@@ -9,7 +9,14 @@ Install
 1. Install BepInEx - https://docs.bepinex.dev/articles/user_guide/installation/index.html Stable version 5.4.21 x86.  
 2. Run the game at least once to initialise BepInEx and quit.  
 3. Download latest mod release.  
-4. Place MC_SVSelectNearestSectorWith.dll and mc_svselectnearestsectorwith in .\SteamLibrary\steamapps\common\Star Valor\BepInEx\plugins\  
+4. Place MC_SVFleetControlExtended.dll in .\Star Valor\BepInEx\plugins\  
+
+Note: This mod includes functionality provided by the following, which should be removed if already in use:
+- MC_SVDockUndockAllHotkeys  
+- MC_SVFleetEnergyBarrierControl  
+- MC_SVFleetRoleHotkeys  
+- MC_SVFleetStationCargoDrop
+All configured settings will be lost (keybinds, energy barrier thresholds).  
 
 Function  
 ========  
