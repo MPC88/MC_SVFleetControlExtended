@@ -34,7 +34,7 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
                 KeyCodeSubset.S,
                 "Command fleet to drop cargo to station.");
             cfgDUDModifier = main.Config.Bind("1. Dock, Undock, Drop Cargo",
-                "Modifier key (dock, undock, store)",
+                "Modifier key",
                 KeyCodeSubset.LeftAlt,
                 "Set to \"None\" to disable modifer key.");
 
