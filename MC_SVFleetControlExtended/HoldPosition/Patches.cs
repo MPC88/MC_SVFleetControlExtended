@@ -16,7 +16,7 @@ namespace MC_SVFleetControlExtended.HoldPosition
                 "Hold position",
                 KeyCodeSubset.X,
                 "Hold position toggle command key.");
-            cfgHoldPosModifier = main.Config.Bind("Keybinds",
+            cfgHoldPosModifier = main.Config.Bind("1. Hold position",
                 "Modifier key (hold position)",
                 KeyCodeSubset.LeftAlt,
                 "Set to \"None\" to disable modifer key.");
