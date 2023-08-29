@@ -8,31 +8,58 @@ namespace MC_SVFleetControlExtended.Escort
     internal class Patches
     {
         private static PlayerControl pc = null;
+        private static Dictionary<Transform, int> followPositionTracking = new Dictionary<Transform, int>();
+
+        internal static void PostLoadInitialise()
+        {
+            if (pc == null)
+                GameManager.instance.Player.GetComponent<PlayerControl>();
+
+            if (pc == null)
+                return;
+
+            followPositionTracking.Clear();
+            foreach (Transform merc in pc.mercenaries)
+            {
+                AIMercenary aim = merc.GetComponent<AIMercenary>();
+                if(aim != null)
+                    aim.DefineFollowPosition(GameData.data.fleetDistanceFromBoss, -1);
+            }
+        }
 
         [HarmonyPatch(typeof(AIMercenary), nameof(AIMercenary.DefineFollowPosition))]
         [HarmonyPostfix]
-        private static void AIMercDefineFollowPos_Post(AIMercenary __instance, int mercNumber, ref GameObject ___followPosition)
+        private static void AIMercDefineFollowPos_Pre(AIMercenary __instance, GameObject ___followPosition)
         {
             Transform escortee = GetEscorteeTransform(__instance);
             if (escortee == null)
-                return;
-
-            if (!escortee.Find("FollowPositionParent"))
             {
+                if (__instance.isPlayerFleet)
+                    escortee = GameManager.instance.Player.transform;
+                else
+                    return;
+            }
+
+            Transform followPosParent = escortee.Find("FollowPositionParent");
+            if (followPosParent == null)
+            {                
                 GameObject gameObject = new GameObject("FollowPositionParent");
                 gameObject.transform.SetParent(escortee, false);
                 gameObject.name = "FollowPositionParent";
-                mercNumber = gameObject.transform.childCount;
-                ___followPosition.transform.SetParent(gameObject.transform, false);
+                followPosParent = gameObject.transform;
+            }
+
+            if(followPositionTracking.TryGetValue(escortee, out int mercNumber))
+            {
+                mercNumber++;
+                followPositionTracking[escortee] = mercNumber;
             }
             else
             {
-                if (mercNumber < 0)
-                {
-                    mercNumber = escortee.Find("FollowPositionParent").childCount;
-                }
-                ___followPosition.transform.SetParent(escortee.Find("FollowPositionParent"), false);
+                followPositionTracking.Add(escortee, mercNumber);
             }
+
+            ___followPosition.transform.SetParent(followPosParent.transform, false);
 
             ___followPosition.transform.localPosition =
                 (Vector3)AccessTools.Method(typeof(AIMercenary), "GetMercXFollowPosition").Invoke(
@@ -63,7 +90,7 @@ namespace MC_SVFleetControlExtended.Escort
                 float distanceToCurObject = 1000f;
                 for (int i = 0; i < objs.Count; i++)
                 {
-                    if (objs[i] != null && objs[i].trans != null)
+                    if (objs[i] != null && objs[i].trans != null && objs[i].trans.gameObject.activeSelf)
                     {
                         float distanceToNextObject = Vector3.Distance(___tf.position, objs[i].trans.position);
                         float additionalDesiredDistance = objs[i].trans.localScale.x * 2f;
@@ -168,7 +195,14 @@ namespace MC_SVFleetControlExtended.Escort
             if ((__instance.Char is PlayerFleetMember) &&
                 Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool dedicatedDefender) &&
                 dedicatedDefender && __instance.target != null && __instance.target.GetComponent<SpaceShip>() != null)
+            {
+                // Check for inactive targets
+                if(!__instance.target.gameObject.activeSelf)
+                    __instance.ForgetTarget(false);
+
+                // Search for new targets
                 typeof(AIMercenary).GetMethod("SearchForEnemies", AccessTools.all).Invoke(__instance, null);
+            }
 
             Transform escortee = GetEscorteeTransform(__instance);
             if (escortee == null || __instance.guardTarget == null)
@@ -215,11 +249,12 @@ namespace MC_SVFleetControlExtended.Escort
         private static bool AIMercSetNewDestination_Pre(AIMercenary __instance)
         {
             Transform escortee = GetEscorteeTransform(__instance);
+
             if (__instance.Char != null && (__instance.Char is PlayerFleetMember) &&
                 Main.data.escorts.ContainsKey((__instance.Char as PlayerFleetMember).crewMemberID) &&
                 escortee == null)
                 return false;
-            
+
             return true;
         }
 
@@ -236,7 +271,7 @@ namespace MC_SVFleetControlExtended.Escort
 
             if (__instance.guardTarget != null)
             {
-                float num = (float)(150 + GameData.data.fleetDistanceFromBoss * 4) + (___tf.localScale.x + escortee.localScale.x) * 3f;
+                float num = (float)(GameData.data.fleetDistanceFromBoss + 20) + ((___tf.localScale.x + escortee.localScale.x) * 3f);
                 if (Vector3.Distance(___tf.position, escortee.position) < num)
                 {
                     __instance.destination = Vector3.zero;

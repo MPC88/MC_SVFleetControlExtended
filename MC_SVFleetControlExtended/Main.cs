@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -43,6 +44,13 @@ namespace MC_SVFleetControlExtended
         {
             DockUndockUnload.Patches.Update();
             HoldPosition.Patches.Update();
+        }
+
+        [HarmonyPatch(typeof(GameManager), nameof(GameManager.SetupGame))]
+        [HarmonyPostfix]
+        private static void GameManagerSetupGame_Post()
+        {
+            Escort.Patches.PostLoadInitialise();
         }
 
         [HarmonyPatch(typeof(GameData), nameof(GameData.SaveGame))]
@@ -104,7 +112,7 @@ namespace MC_SVFleetControlExtended
             }
             catch
             {
-                SideInfo.AddMsg("<color=red>Fleet enegy barrier control mod load failed.</color>");
+                SideInfo.AddMsg("<color=red>Extended fleet control mod load failed.</color>");
             }
         }
     }
