@@ -25,7 +25,7 @@ namespace MC_SVFleetControlExtended.HoldPosition
         internal static void Update()
         {
             if (GameManager.instance == null || !GameManager.instance.inGame ||
-                PChar.Char.mercenaries.Count == 0)
+                PChar.Char.mercenaries.Count == 0 || PlayerControl.inst.blockControls)
                 return;
 
             if ((cfgHoldPosModifier.Value == KeyCodeSubset.None || Input.GetKey((KeyCode)cfgHoldPosModifier.Value)) &&
