@@ -250,10 +250,13 @@ namespace MC_SVFleetControlExtended.Escort
         {
             Transform escortee = GetEscorteeTransform(__instance);
 
+            if ((__instance.carrierDocking && __instance.guardTarget != null) ||
+                ___targetDocking)
+                return true;
+
             if (__instance.Char != null && (__instance.Char is PlayerFleetMember) &&
                 Main.data.escorts.ContainsKey((__instance.Char as PlayerFleetMember).crewMemberID) &&
-                escortee == null || ((__instance.carrierDocking && __instance.guardTarget != null) ||
-                ___targetDocking))
+                escortee == null)
                 return false;
 
             return true;
