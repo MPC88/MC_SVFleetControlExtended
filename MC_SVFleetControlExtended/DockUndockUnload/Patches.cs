@@ -60,7 +60,7 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
         internal static void Update()
         {
             if (GameManager.instance == null || !GameManager.instance.inGame || 
-                FleetControl.instance == null || PlayerControl.inst.blockControls)
+                FleetControl.instance == null)
                 return;
 
             // Dock, undock, drop cargo

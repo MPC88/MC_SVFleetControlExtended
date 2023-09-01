@@ -190,16 +190,18 @@ namespace MC_SVFleetControlExtended.Escort
         [HarmonyPostfix]
         private static void AIMercSetActions_Post(AIMercenary __instance, Transform ___tf)
         {
+            if (!(__instance.Char is PlayerFleetMember))
+                return;
+
             // Set actions is a 3 second update method.  Use that to ensure dedicated defenders are prioritising
             // missiles and drones by invoking search for enemies if their current target is a space ship.
-            if ((__instance.Char is PlayerFleetMember) &&
-                Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool dedicatedDefender) &&
+            if (Main.data.dedicatedDefenderStates.TryGetValue((__instance.Char as PlayerFleetMember).crewMemberID, out bool dedicatedDefender) &&
                 dedicatedDefender && __instance.target != null && __instance.target.GetComponent<SpaceShip>() != null)
             {
                 // Check for inactive targets
                 if(!__instance.target.gameObject.activeSelf)
                     __instance.ForgetTarget(false);
-
+                
                 // Search for new targets
                 typeof(AIMercenary).GetMethod("SearchForEnemies", AccessTools.all).Invoke(__instance, null);
             }
@@ -217,10 +219,14 @@ namespace MC_SVFleetControlExtended.Escort
                 __instance.returningToBoss = true;
             }
 
+            if (__instance.guardTarget == null)
+                return;
+
             AIControl guardTarget = __instance.guardTarget.GetComponent<AIControl>();
 
             if (__instance.target == null || __instance.target == guardTarget.target)
             {
+                Main.log.LogInfo("6");
                 AIControl component2 = escortee.GetComponent<AIControl>();
                 if (role == 0 && component2 && component2.target != null && !component2.repairingTarget)
                 {
