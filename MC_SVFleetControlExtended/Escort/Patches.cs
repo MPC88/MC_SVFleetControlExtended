@@ -189,7 +189,7 @@ namespace MC_SVFleetControlExtended.Escort
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]
         [HarmonyPostfix]
         private static void AIMercSetActions_Post(AIMercenary __instance, Transform ___tf)
-        {
+        {            
             if (!(__instance.Char is PlayerFleetMember))
                 return;
 
@@ -219,19 +219,11 @@ namespace MC_SVFleetControlExtended.Escort
                 __instance.returningToBoss = true;
             }
 
-            if (__instance.guardTarget == null)
-                return;
-
-            AIControl guardTarget = __instance.guardTarget.GetComponent<AIControl>();
-
-            if (__instance.target == null || __instance.target == guardTarget.target)
-            {
-                Main.log.LogInfo("6");
-                AIControl component2 = escortee.GetComponent<AIControl>();
-                if (role == 0 && component2 && component2.target != null && !component2.repairingTarget)
-                {
+            if (__instance.target == null || __instance.target == __instance.guardTarget.GetComponent<PlayerControl>())
+            {            
+                AIControl component2 = escortee.GetComponent<AIControl>();             
+                if (role == 0 && component2 != null && component2.target != null && !component2.repairingTarget)
                     __instance.SetNewTarget(component2.target, true);
-                }
             }
         }
 
@@ -273,7 +265,7 @@ namespace MC_SVFleetControlExtended.Escort
         private static void AIMercSetNewDestination_Post(AIMercenary __instance, DockingControl ___targetDocking, Transform ___tf, GameObject ___followPosition)
         {
             Transform escortee = GetEscorteeTransform(__instance);
-            if (escortee == null || 
+            if (!__instance.isPlayerFleet ||
                 (__instance.carrierDocking && __instance.guardTarget != null) ||
                 ___targetDocking ||
                 __instance.repairingTarget)
@@ -281,6 +273,9 @@ namespace MC_SVFleetControlExtended.Escort
 
             if (__instance.guardTarget != null)
             {
+                if (escortee == null)
+                    escortee = GameManager.instance.Player.transform;
+
                 float num = (float)(GameData.data.fleetDistanceFromBoss + 20) + ((___tf.localScale.x + escortee.localScale.x) * 3f);
                 if (Vector3.Distance(___tf.position, escortee.position) < num)
                 {
