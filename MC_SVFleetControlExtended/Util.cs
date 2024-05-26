@@ -9,7 +9,7 @@ namespace MC_SVFleetControlExtended
     {
         internal enum AIBehaviourRole { dps, healer, miner }
         internal enum ActiveEquipmentType { energybarrier, cloak }
-        private static Dictionary<ActiveEquipmentType, int> effectID = new Dictionary<ActiveEquipmentType, int>()
+        private static readonly Dictionary<ActiveEquipmentType, int> effectID = new Dictionary<ActiveEquipmentType, int>()
         {
             {ActiveEquipmentType.energybarrier, 54}, // Barrier duration
             {ActiveEquipmentType.cloak, 30} // Cloak cooldown
@@ -96,20 +96,26 @@ namespace MC_SVFleetControlExtended
                 return false;
             }
 
-            foreach (InstalledEquipment installEquip in aiMechChar.shipData.equipments)
+            if (aiMechChar.shipData.equipments != null)
             {
-                Equipment equipment = EquipmentDB.GetEquipment(installEquip.equipmentID);
-                for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
-                    if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
-                        return true;
+                foreach (InstalledEquipment installEquip in aiMechChar.shipData.equipments)
+                {
+                    Equipment equipment = EquipmentDB.GetEquipment(installEquip.equipmentID);
+                    for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
+                        if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
+                            return true;
+                }
             }
 
-            foreach (BuiltInEquipmentData builtInEquip in aiMechChar.shipData.builtInData)
+            if (aiMechChar.shipData.builtInData != null)
             {
-                Equipment equipment = EquipmentDB.GetEquipment(builtInEquip.equipmentID);
-                for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
-                    if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
-                        return true;
+                foreach (BuiltInEquipmentData builtInEquip in aiMechChar.shipData.builtInData)
+                {
+                    Equipment equipment = EquipmentDB.GetEquipment(builtInEquip.equipmentID);
+                    for (int effectIndex = 0; effectIndex < equipment.effects.Count; effectIndex++)
+                        if (equipment.effects[effectIndex].type == effectID[activeEquipmentType])
+                            return true;
+                }
             }
 
             return false;
