@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -31,6 +30,7 @@ namespace MC_SVFleetControlExtended
             Harmony.CreateAndPatchAll(typeof(DesiredDistance.Patches));
             Harmony.CreateAndPatchAll(typeof(DockUndockUnload.Patches));
             Harmony.CreateAndPatchAll(typeof(HoldPosition.Patches));
+            Harmony.CreateAndPatchAll(typeof(RemoveAll.Patches));
 
             // Conditional new UI elements
             Harmony.CreateAndPatchAll(typeof(EnergyBarrier.Patches));

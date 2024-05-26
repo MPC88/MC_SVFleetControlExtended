@@ -107,6 +107,8 @@
     <Compile Include="PersistentData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DockUndockUnload\Patches.cs" />
+    <Compile Include="RemoveAll\Patches.cs" />
+    <Compile Include="RemoveAll\UI.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

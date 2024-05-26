@@ -11,7 +11,6 @@ namespace MC_SVFleetControlExtended.HoldPosition
 
         internal static void Config(Main main)
         {
-            // Dock, undock, drop cargo
             cfgHoldPos = main.Config.Bind("1. Hold position",
                 "Hold position",
                 KeyCodeSubset.X,
@@ -35,7 +34,7 @@ namespace MC_SVFleetControlExtended.HoldPosition
                 if(Main.data.holdPosition)
                     SideInfo.AddMsg("Fleet holding position.");
                 else
-                    SideInfo.AddMsg("Fleet moving out.");
+                    SideInfo.AddMsg("Fleet returning to formation.");
             }
         }
         
