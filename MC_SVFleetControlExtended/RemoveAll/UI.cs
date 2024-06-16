@@ -13,33 +13,22 @@ namespace MC_SVFleetControlExtended.RemoveAll
 
         internal static void EnableDisable()
         {
-            if (Patches.dockingUI == null || !Patches.dockingUI.playerDocked || Patches.inventory == null)
+            int cargoMode = 0;
+            int selectedSlot = -1;
+
+            if (Patches.inventory != null)
+            {
+                cargoMode = (int)AccessTools.Field(typeof(Inventory), "cargoMode").GetValue(Patches.inventory);
+                selectedSlot = (int)AccessTools.Field(typeof(Inventory), "selectedSlot").GetValue(Patches.inventory);
+            }
+
+            if (Patches.dockingUI == null || !Patches.dockingUI.playerDocked || cargoMode != 2 || selectedSlot < 0)
             {
                 if (btnRemoveAll != null)
                     btnRemoveAll.SetActive(false);
 
                 return;
-            }
-
-            int cargoMode = (int)AccessTools.Field(typeof(Inventory), "cargoMode").GetValue(Patches.inventory);
-
-            if (cargoMode != 2)
-            {
-                if (btnRemoveAll != null)
-                    btnRemoveAll.SetActive(false);
-
-                return;
-            }
-
-            int selectedSlot = (int)AccessTools.Field(typeof(Inventory), "selectedSlot").GetValue(Patches.inventory);
-
-            if (selectedSlot < 0)
-            {
-                if (btnRemoveAll != null)
-                    btnRemoveAll.SetActive(false);
-
-                return;
-            }
+            }            
 
             if (btnRemoveAll == null)
                 Initialise();
@@ -69,14 +58,10 @@ namespace MC_SVFleetControlExtended.RemoveAll
         internal static void btnRemoveAll_Click()
         {
             InventorySlot[] slots = Patches.inventory.gameObject.GetComponentsInChildren<InventorySlot>();
-
             List<PlayerFleetMember> validFleetMembers = new List<PlayerFleetMember>();
 
             foreach (InventorySlot slot in slots)
             {
-                if (slot.itemIndex < 0)
-                    continue;
-
                 if (slot.itemIndex < 0)
                     continue;
 

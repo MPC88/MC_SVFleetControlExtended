@@ -29,7 +29,7 @@ namespace MC_SVFleetControlExtended.Escort
 
         [HarmonyPatch(typeof(AIMercenary), nameof(AIMercenary.DefineFollowPosition))]
         [HarmonyPostfix]
-        private static void AIMercDefineFollowPos_Pre(AIMercenary __instance, GameObject ___followPosition)
+        private static void AIMercDefineFollowPos_Post(AIMercenary __instance, GameObject ___followPosition)
         {
             Transform escortee = GetEscorteeTransform(__instance);
             if (escortee == null)
@@ -49,14 +49,14 @@ namespace MC_SVFleetControlExtended.Escort
                 followPosParent = gameObject.transform;
             }
 
-            if(followPositionTracking.TryGetValue(escortee, out int mercNumber))
+            if (followPositionTracking.TryGetValue(escortee, out int mercNumber))
             {
                 mercNumber++;
                 followPositionTracking[escortee] = mercNumber;
             }
             else
             {
-                followPositionTracking.Add(escortee, mercNumber);
+                followPositionTracking.Add(escortee, followPosParent.childCount);
             }
 
             ___followPosition.transform.SetParent(followPosParent.transform, false);
