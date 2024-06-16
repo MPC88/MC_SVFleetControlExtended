@@ -28,7 +28,8 @@ On the fleet behaviour configuration panel:
 - Dedicated defender: Fleet member will prioritise attacking drone and missiles.  NOTE they don't care if they have point defence weapons, that's up to you to ensure.  If there are no drones/missiles they will engage hostile ships attacking their assign escortee.  Otherwise, they will not engage at all (i.e. they will not instigate any combat).  I might change this so they ignore missiles, they are pretty bad at those, but they are reasonable at attacking drones.  Hit and run behaviour not recommended.  
 - Force engagement range (low level of testing): DPS fleet member will maintain this distance from their target.  Useful for ships with long range weapons, but also some point defence as this stops them moving into range for their point defence weapons.  This works best with strafe and fire behaviour, hit and run sees fleet members overshooting their desired range (unless you set it to 0 of course, then it's spot on...).  
 - Use energy barrier when HP below: Allows you to set when a fleet member will use their energy barrier (if they have one equipped).  
-- Cloak with player: Fleet member will use their cloaking device (if they have one) when the player does.  They will deactivate with the player too.  NOTE they will not hold fire, you should command this separately if you don't want them to engage just like normal.  
+- Cloak with player: Fleet member will use their cloaking device (if they have one) when the player does.  They will deactivate with the player too.  NOTE they will not hold fire, you should command this separately if you don't want them to engage just like normal.
+- Remove all ships from fleet button added to fleet screen.
   
 Hot keys (configurable, keys shown below are the defaults):
 - Left Alt+A: Undock all (from carrier or station).  
