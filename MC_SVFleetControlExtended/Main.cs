@@ -12,7 +12,7 @@ namespace MC_SVFleetControlExtended
     {
         public const string pluginGuid = "mc.starvalor.fleetcontrolextended";
         public const string pluginName = "SV Fleet Control Extended";
-        public const string pluginVersion = "0.0.1";
+        public const string pluginVersion = "0.0.3";
 
         internal static PersistentData data = null;
 

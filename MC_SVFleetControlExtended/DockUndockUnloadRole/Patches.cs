@@ -90,10 +90,7 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
                 if (PChar.Char.mercenaries != null && PChar.Char.mercenaries.Count > 0)
                 {
                     foreach (AICharacter aiChar in PChar.Char.mercenaries)
-                    {
-                        if (aiChar is PlayerFleetMember)
-                            aiChar.behavior.role = role;
-                    }
+                        aiChar.behavior.role = role;
 
                     if (FleetControl.instance != null)
                         FleetControl.instance.Refresh(false);
