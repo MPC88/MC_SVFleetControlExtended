@@ -47,6 +47,11 @@ namespace MC_SVFleetControlExtended.DesiredDistance
         [HarmonyPrefix]
         private static void FBCOpen_Pre(FleetBehaviorControl __instance, GameObject ___emergencyWarpGO)
         {
+            if (___emergencyWarpGO == null)
+            {
+                AccessTools.Method(typeof(FleetBehaviorControl), "Validate").Invoke(__instance, null);
+                ___emergencyWarpGO = AccessTools.Field(typeof(FleetBehaviorControl), "emergencyWarpGO").GetValue(__instance) as GameObject;
+            }
             UI.ValidateUIElements(__instance, ___emergencyWarpGO);
         }
 

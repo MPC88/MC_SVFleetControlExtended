@@ -183,7 +183,7 @@ namespace MC_SVFleetControlExtended.Escort
                         
             SpaceShip component = escortee.GetComponent<SpaceShip>();
             if(component && component.currHP < component.baseHP)
-                __instance.SetRepairTarget(escortee);
+                __instance.SetRepairTarget(escortee.GetComponent<Entity>());
         }
 
         [HarmonyPatch(typeof(AIMercenary), "SetActions")]
@@ -290,6 +290,12 @@ namespace MC_SVFleetControlExtended.Escort
         [HarmonyPrefix]
         private static void FBCOpen_Pre(FleetBehaviorControl __instance, GameObject ___emergencyWarpGO, Toggle ___collectLootToggle)
         {
+            if (___emergencyWarpGO == null || ___collectLootToggle == null)
+            {
+                AccessTools.Method(typeof(FleetBehaviorControl), "Validate").Invoke(__instance, null);
+                ___collectLootToggle = AccessTools.Field(typeof(FleetBehaviorControl), "collectLootToggle").GetValue(__instance) as Toggle;
+                ___emergencyWarpGO = AccessTools.Field(typeof(FleetBehaviorControl), "emergencyWarpGO").GetValue(__instance) as GameObject;
+            }
             UI.ValidateUIElements(__instance, ___emergencyWarpGO, ___collectLootToggle);
         }
 

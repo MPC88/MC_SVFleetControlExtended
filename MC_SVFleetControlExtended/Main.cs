@@ -12,7 +12,7 @@ namespace MC_SVFleetControlExtended
     {
         public const string pluginGuid = "mc.starvalor.fleetcontrolextended";
         public const string pluginName = "SV Fleet Control Extended";
-        public const string pluginVersion = "0.0.3";
+        public const string pluginVersion = "0.0.4";
 
         internal static PersistentData data = null;
 
@@ -113,6 +113,17 @@ namespace MC_SVFleetControlExtended
             catch
             {
                 SideInfo.AddMsg("<color=red>Extended fleet control mod load failed.</color>");
+            }
+        }
+
+        [HarmonyPatch(typeof(MenuControl), nameof(MenuControl.DeleteSaveGame))]
+        [HarmonyPrefix]
+        private static void DeleteSave_Pre()
+        {
+            if (GameData.ExistsAnySaveFile(GameData.gameFileIndex) &&
+                File.Exists(Application.dataPath + GameData.saveFolderName + modSaveFolder + modSaveFilePrefix + GameData.gameFileIndex.ToString("00") + ".dat"))
+            {
+                File.Delete(Application.dataPath + GameData.saveFolderName + modSaveFolder + modSaveFilePrefix + GameData.gameFileIndex.ToString("00") + ".dat");
             }
         }
     }
