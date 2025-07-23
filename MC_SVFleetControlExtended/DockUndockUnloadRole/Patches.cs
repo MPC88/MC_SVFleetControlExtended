@@ -130,7 +130,7 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
                     for (int j = 0; j < cargo.Count; j++)
                     {
                         CargoItem cargoItem = cargo[j];
-                        if (cargoItem.stockStationID == -1 && cargoItem.itemType < 4 &&
+                        if (cargoItem.stockStationID == -1 && cargoItem.itemType < 5 &&
                             ((cargoItem.isDronePart && !HasDroneBay(aiMercChar.shipData.equipments)) ||
                               (cargoItem.isAmmo && !NeedsThisAmmo(cargoItem.itemID, aiMercChar.shipData.weapons))))
                         {
