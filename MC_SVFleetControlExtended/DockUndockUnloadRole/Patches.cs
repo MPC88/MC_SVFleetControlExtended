@@ -16,7 +16,7 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
         private static ConfigEntry<KeyCodeSubset> cfgDumpAll;
         private static ConfigEntry<KeyCodeSubset> cfgDUDModifier;
 
-        private static List<int> droneEquipIDs;
+        private static readonly List<int> droneEquipIDs = new List<int>() { 33, 34, 115, 116, 117, 118, 119, 186, 188, 189, 195 };
 
         internal static void Config(Main main)
         {
@@ -176,14 +176,6 @@ namespace MC_SVFleetControlExtended.DockUndockUnload
 
         private static bool HasDroneBay(List<InstalledEquipment> installedEquipments)
         {
-            if (droneEquipIDs == null)
-            {
-                droneEquipIDs = new List<int>();
-                foreach (Equipment equip in AccessTools.StaticFieldRefAccess<List<Equipment>>(typeof(EquipmentDB), "equipments"))
-                    if (equip.equipName.Contains("Drone Bay"))
-                        droneEquipIDs.Add(equip.id);
-            }
-
             if (droneEquipIDs.Count > 0)
                 foreach (InstalledEquipment ie in installedEquipments)
                     if (droneEquipIDs.Contains(ie.equipmentID))
